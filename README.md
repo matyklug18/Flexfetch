@@ -1,6 +1,6 @@
 # Flexfetch
 
-A fast fetch program
+A fast and generic fetch program
 
 ### Features
 
