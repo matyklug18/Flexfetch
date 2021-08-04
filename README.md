@@ -18,7 +18,8 @@ Terminal Font is fetched by reading the open fonts of the terminal, and asking f
 GTK Theme is fetched by asking for the `gtk-theme-name` property of gtk settings.
 
 #### Fast
-Currently 4 times faster than neofetch, or 10 times with the `GTK Theme` module is disabled (a fix is in order).
+Currently 4 times faster than neofetch, 10 times with the `GTK Theme` module is disabled, and 100 times for the `nolib` version.
+
 
 ### Installation Instructions
 
