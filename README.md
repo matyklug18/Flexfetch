@@ -5,7 +5,7 @@ A fast and generic fetch program
 ### Features
 
 #### Generic
-WM and Compositor are fetched using Xlib as specified in EWMH.
+WM and Compositor are fetched using Xlib as specified in [EWMH](https://specifications.freedesktop.org/wm-spec/wm-spec-1.3.html).
 
 Shell is fetched by directly reading the password database (`man 3 getpwnam`).
 
@@ -13,7 +13,7 @@ Distro, Kernel, and System are fetched by reading files in `/etc`, `/proc`, and 
 
 Terminal is fetched as the `comm` of the first parent process that has a font open (`/usr/share/fonts`)
 
-Terminal Font is fetched by reading the open fonts of the terminal, and asking fontconfig for their names.
+Terminal Font is fetched by reading the open fonts of the terminal, finding the last one, and asking `fontconfig` for its name.
 
 GTK Theme is fetched by asking for the `gtk-theme-name` property of gtk settings.
 
