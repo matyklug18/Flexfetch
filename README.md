@@ -7,7 +7,7 @@ A fast and generic fetch program
 #### Generic
 WM and Compositor are fetched using Xlib as specified in EWMH.
 
-Shell is fetched by directly reading the password database (man 3 getpwnam).
+Shell is fetched by directly reading the password database (`man 3 getpwnam`).
 
 Distro, Kernel, and System are fetched by reading files in `/etc`, `/proc`, and `/sys`.
 
