@@ -2,6 +2,9 @@
 
 A fast and generic fetch program
 
+## Screenshots
+![Gentoo](./flexfetch-preview.png)
+
 ### Features
 
 #### Generic
@@ -26,3 +29,4 @@ Currently 4 times faster than neofetch, 10 times with the `GTK Theme` module is 
 1. Copy logo files in `logos/` over to `/usr/share/flexfetch/logos`
 2. Compile with `./flexfetch.c` (or `./flexfetch-nox.c` when not running X)
 3. Add the resulting binary onto PATH
+
