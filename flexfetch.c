@@ -1,4 +1,4 @@
-//usr/bin/gcc flexfetch.c `pkg-config gtk+-3.0 --cflags --libs` -IX11 -lX11 -lfontconfig -lm -g -o flexfetch; exec ./flexfetch
+//usr/bin/env gcc flexfetch.c `pkg-config gtk+-3.0 --cflags --libs` -IX11 -lX11 -lfontconfig -lm -g -w -o flexfetch; exec ./flexfetch
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -76,21 +76,15 @@ char* read_grep_last_match_only(char* file, char* pattern) {
 }
 
 int get_ppid_from_pid(int pid) {
-	char path[255] = "";
-	char pid_str[255] = "";
-	sprintf(pid_str, "%d", pid);
-	strcat(path, "/proc/");
-	strcat(path, pid_str);
-	strcat(path, "/stat");
-	char str[255] = "";
-	strcpy(str, read_all(path));
-  const char s[255] = " ";
-	char *token = strtok(str, s);
-
-	for(int i = 0; i < 3; i++) {
-		token = strtok(NULL, s);
-	}
-	return atoi(token);
+	char path[4096];
+	char buf[4096];
+	snprintf(path, 4096, "/proc/%d/stat", pid);
+	FILE* fp = fopen(path, "r");
+	fread(buf, sizeof(char), 4096, fp);
+	fclose(fp);
+	strtok(buf, " ");
+	for(int i = 0; i < 2; i++) strtok(NULL, " ");
+	return atoi(strtok(NULL, " "));
 }
 
 char* get_pid_name(int pid) {
@@ -113,7 +107,7 @@ int get_term_pid(int pid) {
 	FILE *fp;
 	fp = fopen(path, "r");
 	char* line = "";
-	char* cmp = "/usr/share/fonts";
+	char* cmp = "fonts";
 	size_t len = 0;
 	while(strstr(line, cmp) == NULL) {
 		if(getline(&line, &len, fp) == -1)
@@ -198,7 +192,7 @@ char* fetch_font() {
 	strcat(path, pid_str);
 	strcat(path, "/maps");
 	char str[255] = "";
-	strcpy(str, read_grep_last_match_only(path, "/usr/share/fonts"));
+	strcpy(str, read_grep_last_match_only(path, "fonts"));
 	FcInit();
   FcFontSet* fs = FcFontSetCreate();
 	char* pth = malloc(strlen(str)+1);
@@ -268,7 +262,7 @@ int main(int argc, char* argv[]) {
 				printf("\e[34m\e[1mCompositor    \e[36m \e[22m%s%s\n", fetch_comp_name(), color);
 				break;
 			case 2:
-				printf("\e[34m\e[1mShell         \e[36m \e[22m%s%s\n", fetch_shell(), color);
+				printf("\e[34m\e[1mLogin Shell   \e[36m \e[22m%s%s\n", fetch_shell(), color);
 				break;
   		case 3:
   			printf("\e[34m\e[1mDistribution  \e[36m \e[22m%s%s\n", fetch_distro(), color);
