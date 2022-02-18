@@ -190,11 +190,12 @@ char* fetch_font() {
 }
 
 char* fetch_gtk_theme() {
-	char* home = getpwuid(getuid())->pw_dir;
-	char* path_gtk_2 = malloc(4096);
-	strcpy(path_gtk_2, home);
-	strcat(path_gtk_2, "/.gtkrc-2.0");
-	return read_grep(path_gtk_2, "gtk-theme-name=", 1, 1);
+//char* home = getpwuid(getuid())->pw_dir;
+//char* path_gtk_2 = malloc(4096);
+//strcpy(path_gtk_2, home);
+//strcat(path_gtk_2, "/.gtkrc-2.0");
+//return read_grep(path_gtk_2, "gtk-theme-name=", 1, 1);
+  return "UNIMPLEMENTED";
 }
 
 /*----*\
@@ -279,6 +280,6 @@ int main(int argc, char* argv[]) {
 				break;
 		}
 	}
-	printf("\n");
+	printf("\e[0m\e[39m \e[49m\n");
 	free(color);
 }

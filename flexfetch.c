@@ -12,7 +12,6 @@
 #include <sys/utsname.h>
 #include <sys/types.h>
 
-
 #include <fontconfig/fontconfig.h>
 
 #include <gtk/gtk.h>
@@ -121,6 +120,30 @@ int get_term_pid(int pid) {
 	}
 }
 
+int get_shell_pid(int pid) {
+	char path[255] = "";
+	char pid_str[255] = "";
+	sprintf(pid_str, "%d", get_ppid_from_pid(pid));
+	strcat(path, "/proc/");
+	strcat(path, pid_str);
+	strcat(path, "/maps");
+	FILE *fp;
+	fp = fopen(path, "r");
+	char* line = "";
+	char* cmp = "fonts";
+	size_t len = 0;
+	while(strstr(line, cmp) == NULL) {
+		if(getline(&line, &len, fp) == -1)
+			break;
+	}
+	if(strstr(line, cmp) != NULL) {
+		return pid;
+	}
+	else {
+		return get_shell_pid(get_ppid_from_pid(pid));
+	}
+}
+
 /*------------------*\
 | FETCHING FUNCTIONS |
 \*------------------*/
@@ -146,7 +169,7 @@ char* fetch_comp_name() {
 	}
 }
 
-char* fetch_shell() {
+char* fetch_login_shell() {
 	struct passwd* passwd_entry = getpwuid(getuid());
 	return basename(passwd_entry->pw_shell);
 }
@@ -180,6 +203,12 @@ char* fetch_system_name() {
 
 char* fetch_terminal() {
 	char* term_name = get_pid_name(get_term_pid(getppid()));
+	term_name[strlen(term_name)-1] = 0;
+	return term_name;
+}
+
+char* fetch_running_shell() {
+	char* term_name = get_pid_name(get_shell_pid(getppid()));
 	term_name[strlen(term_name)-1] = 0;
 	return term_name;
 }
@@ -262,36 +291,39 @@ int main(int argc, char* argv[]) {
 				printf("\e[34m\e[1mCompositor    \e[36m \e[22m%s%s\n", fetch_comp_name(), color);
 				break;
 			case 2:
-				printf("\e[34m\e[1mLogin Shell   \e[36m \e[22m%s%s\n", fetch_shell(), color);
+				printf("\e[34m\e[1mLogin Shell   \e[36m \e[22m%s%s\n", fetch_login_shell(), color);
 				break;
-  		case 3:
+			case 3:
+				printf("\e[34m\e[1mTerminal Shell\e[36m \e[22m%s%s\n", fetch_running_shell(), color);
+				break;
+  		case 4:
   			printf("\e[34m\e[1mDistribution  \e[36m \e[22m%s%s\n", fetch_distro(), color);
   			break;
-			case 4:
+			case 5:
 				printf("\e[34m\e[1mKernel        \e[36m \e[22m%s%s\n", fetch_kernel(), color);
 				break;
-			case 5:
+			case 6:
 				printf("\e[34m\e[1mSystem Model  \e[36m \e[22m%s%s\n", fetch_system_name(), color);
 				break;
-			case 6:
+			case 7:
 				printf("\e[34m\e[1mTerminal      \e[36m \e[22m%s%s\n", fetch_terminal(), color);
 				break;
-			case 7:
+			case 8:
 				printf("\e[34m\e[1mTerminal Font \e[36m \e[22m%s%s\n", fetch_font(), color);
 				break;
-			case 8:
+			case 9:
 				printf("\e[34m\e[1mGTK Widget    \e[36m \e[22m%s%s\n", fetch_gtk_theme(), color);
 				break;
-    	case 9:
+    	case 10:
     		printf("\n");
     		break;
-    	case 10:
+    	case 11:
     		printf("\e[40m   \e[41m   \e[42m   \e[43m   \e[44m   \e[45m   \e[46m   \e[47m   \e[49m\n");
     		break;
-    	case 11:
+    	case 12:
     		printf("\e[100m   \e[101m   \e[102m   \e[103m   \e[104m   \e[105m   \e[106m   \e[107m   \e[49m\n");
     		break;
-			case 12:
+			case 13:
 				if(file_read) run = false;
 				break;
 			default:
@@ -299,6 +331,6 @@ int main(int argc, char* argv[]) {
 				break;
 		}
 	}
-	printf("\n");
+	printf("\e[0m\e[39m \e[49m\n");
 	free(color);
 }
